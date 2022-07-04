@@ -6,3 +6,13 @@ exports.fetchCategories = () => {
         return categories.rows;
     });
 }
+
+exports.fetchReviewByID = (reviewID) => {
+    return db.query(`
+    SELECT * FROM reviews
+    WHERE review_id = $1
+    `, [reviewID])
+    .then(review => {
+        return review.rows[0];
+    })
+}

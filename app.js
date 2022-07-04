@@ -6,6 +6,12 @@ const {
 
 app.use(express.json());
 
+// GET REQUESTS:
+
 app.get('/api/categories', getCategories);
+
+// ERROR HANDLING:
+
+app.use('*', handleBadPaths);
 
 module.exports = app;

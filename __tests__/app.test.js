@@ -26,3 +26,13 @@ describe("GET/api/categories requests.", () => {
 
     })
 })
+
+describe("Error handling.", () => {
+    test("Responds to bad paths with 404 status and descriptive message.", () => {
+        return request(app).get('/api/category')
+        .expect(404)
+        .then(({ message }) => {
+            expect(message).toBe("That page does not exist.");
+        })
+    })
+})

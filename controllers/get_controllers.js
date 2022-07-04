@@ -10,10 +10,14 @@ exports.getCategories = (req, res) => {
     })
 }
 
-exports.getReviewByID = (req, res) => {
+exports.getReviewByID = (req, res, next) => {
     const { review_id } = req.params;
     fetchReviewByID(review_id)
     .then(review => {
-        res.status(200).send({review});
+        if (!review) {next({status: 404, message: "That Review ID doesn't exist."});}
+        else {res.status(200).send({review});}
     })
+    .catch(err => {
+        next(err);
+    });
 }

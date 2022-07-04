@@ -28,19 +28,41 @@ describe("GET/api/categories requests.", () => {
         return request(app).get('/api/reviews/2')
         .expect(200)
         .then(({body}) => {
-            expect(typeof body).toBe("object");
-            expect(body.review.title).toBe("Jenga");
-            expect(Object.keys(body.review).length).toBe(9);
+            expect(body.review).toEqual({
+                review_id: 2,
+                title: 'Jenga',
+                designer: 'Leslie Scott',
+                owner: 'philippaclaire9',
+                review_img_url:'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                review_body: 'Fiddly fun for all the family',
+                category: 'dexterity',
+                created_at: '2021-01-18T10:01:41.251Z',
+                votes: 5
+            })
         })
     })
 })
 
 describe("Error handling.", () => {
-    test("Responds to bad paths with 404 status and descriptive message.", () => {
+    test("Responds to bad paths with 404 status and relevant message.", () => {
         return request(app).get('/api/category')
         .expect(404)
         .then(({body}) => {
             expect(body.message).toBe("That page does not exist.");
+        })
+    })
+    test("Responds to valid-but-non-existent paths with 404 status and relevant message.", () => {
+        return request(app).get('/api/reviews/1000')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe("That Review ID doesn't exist.");
+        })
+    })
+    test("Responds to invalid paths with 404 status and relevant message.", () => {
+        return request(app).get('/api/reviews/apple')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.message).toBe("Invalid Review ID.");
         })
     })
 })

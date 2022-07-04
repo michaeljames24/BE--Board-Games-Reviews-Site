@@ -5,7 +5,9 @@ const {
     getReviewByID
 } = require('./controllers/get_controllers');
 const {
-    handleBadPaths
+    handleBadPaths,
+    handlePSQLErrors,
+    handleCustomErrors
 } = require('./errors/errors');
 
 app.use(express.json());
@@ -19,5 +21,9 @@ app.get('/api/reviews/:review_id', getReviewByID);
 // ERROR HANDLING:
 
 app.use('*', handleBadPaths);
+
+app.use(handlePSQLErrors);
+
+app.use(handleCustomErrors);
 
 module.exports = app;

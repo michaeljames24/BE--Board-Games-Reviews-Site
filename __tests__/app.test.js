@@ -16,14 +16,13 @@ describe("GET/api/categories requests.", () => {
     test("Responds with an array of objects, each of which contain 'slug' and 'description' properties.", () => {
         return request(app).get('/api/categories')
         .expect(200)
-        .then(categories => {
-            expect(typeof categories).toBe("object");
-            expect.objectContaining({
-                slug: expect.any(String),
-                description: expect.any(String)
-            });
+        .then(({body}) => {
+            expect(typeof body).toBe("object");
+            body.forEach(category => {
+                expect(category.slug).toEqual(expect.any(String));
+                expect(category.description).toEqual(expect.any(String));
+            })
         })
-
     })
 })
 
@@ -31,8 +30,8 @@ describe("Error handling.", () => {
     test("Responds to bad paths with 404 status and descriptive message.", () => {
         return request(app).get('/api/category')
         .expect(404)
-        .then(({ message }) => {
-            expect(message).toBe("That page does not exist.");
+        .then(({body}) => {
+            expect(body.message).toBe("That page does not exist.");
         })
     })
 })

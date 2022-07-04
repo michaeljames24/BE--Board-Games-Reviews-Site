@@ -3,6 +3,9 @@ const app = express();
 const {
     getCategories
 } = require('./controllers/get_controllers');
+const {
+    handleBadPaths
+} = require('./errors/errors');
 
 app.use(express.json());
 

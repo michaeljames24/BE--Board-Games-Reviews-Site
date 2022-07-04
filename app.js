@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const {
-    getCategories
+    getCategories,
+    getReviewByID
 } = require('./controllers/get_controllers');
 const {
     handleBadPaths
@@ -12,6 +13,8 @@ app.use(express.json());
 // GET REQUESTS:
 
 app.get('/api/categories', getCategories);
+
+app.get('/api/reviews/:review_id', getReviewByID);
 
 // ERROR HANDLING:
 

@@ -24,6 +24,15 @@ describe("GET/api/categories requests.", () => {
             })
         })
     })
+    test("Responds with a specific review object.", () => {
+        return request(app).get('/api/reviews/2')
+        .expect(200)
+        .then(({body}) => {
+            expect(typeof body).toBe("object");
+            expect(body.review.title).toBe("Jenga");
+            expect(Object.keys(body.review).length).toBe(9);
+        })
+    })
 })
 
 describe("Error handling.", () => {

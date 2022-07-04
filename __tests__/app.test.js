@@ -26,6 +26,18 @@ describe("GET/api/categories requests.", () => {
     })
 })
 
+describe("PATCH/api/reviews requests.", () => {
+    test("Increments the specified reviews 'votes' value by the input amount.", () => {
+        return request(app).patch('/api/reviews/2')
+        .expect(200)
+        .send({ inc_votes: 5 })
+        .then(({body}) => {
+            expect(typeof body).toBe("object");
+            expect(body.votes).toBe(10);
+        })
+    })
+})
+
 describe("Error handling.", () => {
     test("Responds to bad paths with 404 status and descriptive message.", () => {
         return request(app).get('/api/category')

@@ -12,143 +12,163 @@ afterAll(() => {
     db.end();
 })
 
-describe("GET /api/categories requests.", () => {
+describe("GET /api/categories endpoint.", () => {
 
-    test("Responds with an array of objects, each of which contain 'slug' and 'description' properties.", () => {
-        return request(app).get('/api/categories')
-        .expect(200)
-        .then(({body}) => {
-            body.forEach(category => {
-                expect(category.slug).toEqual(expect.any(String));
-                expect(category.description).toEqual(expect.any(String));
+    describe("Functionality tests:", () => {
+
+        test("Responds with an array of objects, each of which contains 'slug' and 'description' properties.", () => {
+            return request(app).get('/api/categories')
+            .expect(200)
+            .then(({body}) => {
+                body.forEach(category => {
+                    expect(category.slug).toEqual(expect.any(String));
+                    expect(category.description).toEqual(expect.any(String));
+                })
             })
         })
+
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Responds to invalid categories path with 404 status and 'That page does not exist' message.", () => {
+            return request(app).get('/api/category')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That page does not exist.");
+            })
+        })
+
     })
 
 })
 
-describe("GET /api/reviews/:review_id requests.", () => {
+describe("GET /api/reviews/:review_id endpoint.", () => {
 
-    test("Responds with a specific review object.", () => {
-        return request(app).get('/api/reviews/2')
-        .expect(200)
-        .then(({body}) => {
-            expect(body.review).toEqual({
-                review_id: 2,
-                title: 'Jenga',
-                designer: 'Leslie Scott',
-                owner: 'philippaclaire9',
-                review_img_url:'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-                review_body: 'Fiddly fun for all the family',
-                category: 'dexterity',
-                created_at: '2021-01-18T10:01:41.251Z',
-                votes: 5
-            })
-        })
-    })
+    describe("Functionality tests:", () => {
 
-})
-
-
-describe("PATCH /api/reviews requests.", () => {
-
-    test("Returns an object with a key of 'review', containing the review that was updated.", () => {
-        return request(app).patch('/api/reviews/2')
-        .expect(200)
-        .send({ inc_votes: 5 })
-        .then(({body}) => {
-            expect(body.review).toEqual(
-                expect.objectContaining({
+        test("Responds with a specific review object.", () => {
+            return request(app).get('/api/reviews/2')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.review).toEqual({
+                    review_id: 2,
                     title: 'Jenga',
                     designer: 'Leslie Scott',
                     owner: 'philippaclaire9',
-                    review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                    review_img_url:'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
                     review_body: 'Fiddly fun for all the family',
                     category: 'dexterity',
-                    created_at: '2021-01-18T10:01:41.251Z'
+                    created_at: '2021-01-18T10:01:41.251Z',
+                    votes: 5
                 })
-            )
+            })
         })
+
     })
 
-    test("Increments the specified reviews 'votes' value by the input amount.", () => {
-        return request(app).patch('/api/reviews/2')
-        .expect(200)
-        .send({ inc_votes: 5 })
-        .then(({body}) => {
-            expect(body.review.votes).toBe(10);
+    describe("Error handling tests:", () => {
+
+        test("Responds to invalid reviews path with 404 status and 'That page does not exist' message.", () => {
+            return request(app).get('/api/reveiws/2')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That page does not exist.");
+            })
         })
-    })
 
-})
-
-describe("Errors: Bad paths.", () => {
-
-    test("Responds to bad categories path with 404 status and relevant message.", () => {
-        return request(app).get('/api/category')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.message).toBe("That page does not exist.");
+        test("Responds to valid but non-existent Review ID with 404 status and 'That Review ID doesn't exist' message.", () => {
+            return request(app).get('/api/reviews/1000')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That Review ID doesn't exist.");
+            })
         })
-    })
 
-    test("Responds to bad reviews path with 404 status and relevant message.", () => {
-        return request(app).get('/api/reveiws/2')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.message).toBe("That page does not exist.");
+        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+            return request(app).get('/api/reviews/apple')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid Review ID or input object.");
+            })
         })
-    })
 
-})
-
-describe("Errors: Valid but non-existent paths.", () => {
-
-    test("GET request: Responds to valid but non-existent Review ID with 404 status and relevant message.", () => {
-        return request(app).get('/api/reviews/1000')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.message).toBe("That Review ID doesn't exist.");
-        })
-    })
-
-    test("PATCH request: Responds to valid but non-existent Review ID with 404 status and relevant message.", () => {
-        return request(app).patch('/api/reviews/1000')
-        .expect(404)
-        .send({ inc_votes: 5 })
-        .then(({body}) => {
-            expect(body.message).toBe("That Review ID doesn't exist.");
-        })
     })
 
 })
 
-describe("Errors: Invalid paths/ input objects.", () => {
+describe("PATCH /api/reviews/:review_id endpoint.", () => {
 
-    test("Responds to invalid Review ID with 400 status and relevant message.", () => {
-        return request(app).get('/api/reviews/apple')
-        .expect(400)
-        .then(({body}) => {
-            expect(body.message).toBe("Invalid Review ID or input object.");
+    describe("Functionality tests:", () => {
+
+        test("Returns an object with a key of 'review' containing the review object that was updated.", () => {
+            return request(app).patch('/api/reviews/2')
+            .expect(200)
+            .send({ inc_votes: 5 })
+            .then(({body}) => {
+                expect(body.review).toEqual(
+                    expect.objectContaining({
+                        title: 'Jenga',
+                        designer: 'Leslie Scott',
+                        owner: 'philippaclaire9',
+                        review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                        review_body: 'Fiddly fun for all the family',
+                        category: 'dexterity',
+                        created_at: '2021-01-18T10:01:41.251Z'
+                    })
+                )
+            })
         })
+    
+        test("Increments the specified reviews 'votes' value by the input amount.", () => {
+            return request(app).patch('/api/reviews/2')
+            .expect(200)
+            .send({ inc_votes: 5 })
+            .then(({body}) => {
+                expect(body.review.votes).toBe(10);
+            })
+        })
+    
     })
 
-    test("Responds to invalid input on patch request with 400 status and relevant message.", () => {
-        return request(app).patch('/api/reviews/2')
-        .expect(400)
-        .send({ inc_votes: 'A' })
-        .then(({body}) => {
-            expect(body.message).toBe("Invalid Review ID or input object.");
-        })
-    })
+    describe("Error handling tests:", () => {
 
-    test("Responds to empty object on patch request with 400 status and relevant message.", () => {
-        return request(app).patch('/api/reviews/2')
-        .expect(400)
-        .send({})
-        .then(({body}) => {
-            expect(body.message).toBe("Invalid input object.");
+        test("Responds to valid but non-existent Review ID with 404 status and 'That Review ID doesn't exist' message.", () => {
+            return request(app).patch('/api/reviews/1000')
+            .expect(404)
+            .send({ inc_votes: 5 })
+            .then(({body}) => {
+                expect(body.message).toBe("That Review ID doesn't exist.");
+            })
         })
+
+        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+            return request(app).patch('/api/reviews/ABC')
+            .expect(400)
+            .send({ inc_votes: 5 })
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid Review ID or input object.");
+            })
+        })
+
+        test("Responds to invalid inc_votes value on input object with 400 status and 'Invalid Review ID or input object' message.", () => {
+            return request(app).patch('/api/reviews/2')
+            .expect(400)
+            .send({ inc_votes: 'A' })
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid Review ID or input object.");
+            })
+        })
+
+        test("Responds to empty input object with 400 status and 'Invalid input object' message.", () => {
+            return request(app).patch('/api/reviews/2')
+            .expect(400)
+            .send({})
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid input object.");
+            })
+        })
+
     })
 
 })

@@ -12,7 +12,8 @@ afterAll(() => {
     db.end();
 })
 
-describe("GET/api/categories requests.", () => {
+describe("GET /api/categories requests.", () => {
+
     test("Responds with an array of objects, each of which contain 'slug' and 'description' properties.", () => {
         return request(app).get('/api/categories')
         .expect(200)
@@ -24,6 +25,11 @@ describe("GET/api/categories requests.", () => {
             })
         })
     })
+
+})
+
+describe("GET /api/reviews/:review_id requests.", () => {
+
     test("Responds with a specific review object.", () => {
         return request(app).get('/api/reviews/2')
         .expect(200)
@@ -41,9 +47,12 @@ describe("GET/api/categories requests.", () => {
             })
         })
     })
+
 })
 
-describe("PATCH/api/reviews requests.", () => {
+
+describe("PATCH /api/reviews requests.", () => {
+
     test("Increments the specified reviews 'votes' value by the input amount.", () => {
         return request(app).patch('/api/reviews/2')
         .expect(200)
@@ -53,28 +62,58 @@ describe("PATCH/api/reviews requests.", () => {
             expect(body.votes).toBe(10);
         })
     })
+
 })
 
-describe("Error handling.", () => {
-    test("Responds to bad paths with 404 status and relevant message.", () => {
+describe("Errors: Bad paths.", () => {
+
+    test("Responds to bad categories path with 404 status and relevant message.", () => {
         return request(app).get('/api/category')
         .expect(404)
         .then(({body}) => {
             expect(body.message).toBe("That page does not exist.");
         })
     })
-    test("Responds to valid-but-non-existent paths with 404 status and relevant message.", () => {
+
+    test("Responds to bad reviews path with 404 status and relevant message.", () => {
+        return request(app).get('/api/reveiws/2')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe("That page does not exist.");
+        })
+    })
+
+})
+
+describe("Errors: Valid but non-existent paths.", () => {
+
+    test("Responds to valid but non-existent Review ID with 404 status and relevant message.", () => {
         return request(app).get('/api/reviews/1000')
         .expect(404)
         .then(({body}) => {
             expect(body.message).toBe("That Review ID doesn't exist.");
         })
     })
-    test("Responds to invalid paths with 404 status and relevant message.", () => {
+
+})
+
+describe("Errors: Invalid paths/ input objects.", () => {
+
+    test("Responds to invalid Review ID with 400 status and relevant message.", () => {
         return request(app).get('/api/reviews/apple')
         .expect(400)
         .then(({body}) => {
-            expect(body.message).toBe("Invalid Review ID.");
+            expect(body.message).toBe("Invalid Review ID or input object.");
         })
     })
+
+    test("Responds to invalid input on patch request with 400 status and relevant message.", () => {
+        return request(app).patch('/api/reviews/2')
+        .expect(400)
+        .send({ inc_votes: 'A' })
+        .then(({body}) => {
+            expect(body.message).toBe("Invalid Review ID or input object.");
+        })
+    })
+
 })

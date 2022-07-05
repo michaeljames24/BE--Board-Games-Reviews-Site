@@ -4,7 +4,7 @@ exports.handleBadPaths = (req, res) => {
 
 exports.handlePSQLErrors = (err, req, res, next) => {
     if (err.code === "22P02") {
-        res.status(400).send({message: "Invalid Review ID."});
+        res.status(400).send({message: "Invalid Review ID or input object."});
     }
     next(err);
 }

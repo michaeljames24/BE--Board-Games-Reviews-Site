@@ -9,11 +9,11 @@ app.use(express.json());
 // GET REQUESTS:
 
 app.get('/api/categories', getCategories);
+app.get('/api/reviews/:review_id', getReviewByID);
 
 // PATCH REQUESTS:
 
 app.patch('/api/reviews/:review_id', patchReview);
-app.get('/api/reviews/:review_id', getReviewByID);
 
 // ERROR HANDLING:
 

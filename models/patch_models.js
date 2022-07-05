@@ -9,5 +9,5 @@ exports.updateReview = (inc_votes, review_id) => {
     `, [inc_votes, review_id])
     .then(review => {
         return review.rows;
-    })
+    });
 }

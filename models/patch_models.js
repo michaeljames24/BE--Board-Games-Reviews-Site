@@ -5,7 +5,7 @@ exports.updateReview = (inc_votes, review_id) => {
     UPDATE reviews
     SET votes = votes + $1
     WHERE review_id = $2
-    RETURNING *;    
+    RETURNING *
     `, [inc_votes, review_id])
     .then(review => {
         return review.rows;

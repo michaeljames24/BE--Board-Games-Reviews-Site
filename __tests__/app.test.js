@@ -47,7 +47,7 @@ describe("GET /api/users endpoint.", () => {
 
     describe("Functionality tests:", () => {
 
-        test("Responds with array of objects, each of which contains the correct four properties.", () => {
+        test("Responds with an array of four objects, each of which contains the correct three properties.", () => {
             return request(app).get('/api/users')
             .expect(200)
             .then(({body}) => {

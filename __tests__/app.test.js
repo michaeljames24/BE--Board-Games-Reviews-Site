@@ -43,6 +43,39 @@ describe("GET /api/categories endpoint.", () => {
 
 })
 
+describe("GET /api/users endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Responds with an array of four objects, each of which contains the correct three properties.", () => {
+            return request(app).get('/api/users')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(4);
+                body.forEach(user => {
+                    expect(user.username).toEqual(expect.any(String));
+                    expect(user.name).toEqual(expect.any(String));
+                    expect(user.avatar_url).toEqual(expect.any(String));
+                })
+            })
+        })
+    
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Responds to invalid users path with 404 status and 'That page does not exist' message.", () => {
+            return request(app).get('/api/user')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That page does not exist.");
+            })
+        })
+    
+    })
+
+})
+
 describe("GET /api/reviews/:review_id endpoint.", () => {
 
     describe("Functionality tests:", () => {

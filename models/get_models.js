@@ -7,6 +7,13 @@ exports.fetchCategories = () => {
     });
 }
 
+exports.fetchUsers = () => {
+    return db.query(`SELECT * FROM users`)
+    .then(users => {
+        return users.rows;
+    });
+}
+
 exports.fetchReviewByID = (reviewID) => {
     return db.query(`
     SELECT * FROM reviews

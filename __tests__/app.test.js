@@ -43,27 +43,35 @@ describe.skip("GET/api/categories requests.", () => {
     })
 })
 
-describe.only("GET /api/users requests.", () => {
+describe.only("GET /api/users endpoint.", () => {
 
-    test("Responds with array of objects, each of which contains the correct properties.", () => {
-        return request(app).get('/api/users')
-        .expect(200)
-        .then(({body}) => {
-            expect(body.length).toBe(4);
-            body.forEach(user => {
-                expect(user.username).toEqual(expect.any(String));
-                expect(user.name).toEqual(expect.any(String));
-                expect(user.avatar_url).toEqual(expect.any(String));
+    describe("Functionality tests:", () => {
+
+        test("Responds with array of objects, each of which contains the correct four properties.", () => {
+            return request(app).get('/api/users')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(4);
+                body.forEach(user => {
+                    expect(user.username).toEqual(expect.any(String));
+                    expect(user.name).toEqual(expect.any(String));
+                    expect(user.avatar_url).toEqual(expect.any(String));
+                })
             })
         })
+    
     })
 
-    test("Errors: Bad Paths.", () => {
-        return request(app).get('/api/user')
-        .expect(404)
-        .then(({body}) => {
-            expect(body.message).toBe("That page does not exist.");
+    describe("Error handling tests:", () => {
+
+        test("Responds to invalid users path with 404 status and 'That page does not exist' message.", () => {
+            return request(app).get('/api/user')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That page does not exist.");
+            })
         })
+    
     })
 
 })

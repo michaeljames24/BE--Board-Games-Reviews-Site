@@ -12,12 +12,12 @@ afterAll(() => {
     db.end();
 })
 
-describe("GET/api/categories requests.", () => {
+describe.skip("GET/api/categories requests.", () => {
     test("Responds with an array of objects, each of which contain 'slug' and 'description' properties.", () => {
         return request(app).get('/api/categories')
         .expect(200)
         .then(({body}) => {
-            expect(typeof body).toBe("object");
+            expect(body.length).toBe(4);
             body.forEach(category => {
                 expect(category.slug).toEqual(expect.any(String));
                 expect(category.description).toEqual(expect.any(String));
@@ -43,7 +43,32 @@ describe("GET/api/categories requests.", () => {
     })
 })
 
-describe("Error handling.", () => {
+describe.only("GET /api/users requests.", () => {
+
+    test("Responds with array of objects, each of which contains the correct properties.", () => {
+        return request(app).get('/api/users')
+        .expect(200)
+        .then(({body}) => {
+            expect(body.length).toBe(4);
+            body.forEach(user => {
+                expect(user.username).toEqual(expect.any(String));
+                expect(user.name).toEqual(expect.any(String));
+                expect(user.avatar_url).toEqual(expect.any(String));
+            })
+        })
+    })
+
+    test("Errors: Bad Paths.", () => {
+        return request(app).get('/api/user')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.message).toBe("That page does not exist.");
+        })
+    })
+
+})
+
+describe.skip("Error handling.", () => {
     test("Responds to bad paths with 404 status and relevant message.", () => {
         return request(app).get('/api/category')
         .expect(404)

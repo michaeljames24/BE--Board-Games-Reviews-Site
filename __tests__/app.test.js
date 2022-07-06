@@ -197,6 +197,15 @@ describe("GET /api/reviews/:review_id/comments endpoint.", () => {
                     expect(comment.review_id).toEqual(expect.any(Number));
                 })
             })
+            
+        })
+
+        test("If review has no comments, returns an empty array.", () => {
+            return request(app).get('/api/reviews/1/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments).toEqual([]);
+            })
         })
     
     })
@@ -211,19 +220,11 @@ describe("GET /api/reviews/:review_id/comments endpoint.", () => {
             })
         })
 
-        test("Responds to valid but non-existent Review ID with 404 status and 'That review either has no comments or does not exist' message.", () => {
+        test("Responds to valid but non-existent Review ID with 404 status and 'That review does not exist' message.", () => {
             return request(app).get('/api/reviews/1000/comments')
             .expect(404)
             .then(({body}) => {
-                expect(body.message).toBe("That review either has no comments or does not exist.");
-            })
-        })
-
-        test("If review has no comments, returns 404 status and 'That review either has no comments or does not exist' message.", () => {
-            return request(app).get('/api/reviews/1/comments')
-            .expect(404)
-            .then(({body}) => {
-                expect(body.message).toBe("That review either has no comments or does not exist.");
+                expect(body.message).toBe("That review does not exist.");
             })
         })
 

@@ -1,4 +1,4 @@
-const {fetchCategories, fetchReviews, fetchReviewByID, fetchReviewComments, fetchUsers} = require('../models/get_models');
+const {fetchCategories, fetchReviews, fetchReviewByID, checkReviewExists, fetchReviewComments, fetchUsers} = require('../models/get_models');
 
 exports.getCategories = (req, res) => {
     fetchCategories()
@@ -33,14 +33,17 @@ exports.getReviewByID = (req, res, next) => {
     });
 }
 
-exports.getReviewComments = (req, res, next) => {
+exports.getReviewComments = async (req, res, next) => {
     const { review_id } = req.params;
-    fetchReviewComments(review_id)
-    .then(comments => {
-        if (comments.length === 0) {next({status: 404, message: "That review either has no comments or does not exist."});}
-        else {res.status(200).send({comments});}
-    })
-    .catch(err => {
-        next(err);
-    });
+    if (await checkReviewExists(review_id)) {
+
+        fetchReviewComments(review_id)
+        .then(comments => {
+            res.status(200).send({comments});
+        })
+        .catch(err => {
+            next(err);
+        });
+
+    } else { next({status: 404, message: "That review does not exist."}); }
 }

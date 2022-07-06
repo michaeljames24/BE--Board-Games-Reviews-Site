@@ -315,3 +315,65 @@ describe("PATCH /api/reviews/:review_id endpoint.", () => {
     })
 
 })
+
+describe("POST /api/reviews/:review_id/comments endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Returns an object with a key of 'comment' containing the comment object that was created (complete with six standard properties).", () => {
+            return request(app).post('/api/reviews/10/comments')
+            .expect(201)
+            .send( {username: 'philippaclaire9', body: "Sounds great. You've sold it to me!"} )
+            .then(({body}) => {
+                expect(body.comment.author).toEqual('philippaclaire9');
+                expect(body.comment.body).toEqual("Sounds great. You've sold it to me!");
+                expect(body.comment.comment_id).toBe(7);
+                expect(body.comment.votes).toBe(0);
+                expect(body.comment.review_id).toBe(10);
+                expect(body.comment.created_at).toEqual(expect.any(String));
+            })
+        })
+
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Responds to valid but non-existent Review ID with 404 status and 'That Review ID doesn't exist' message.", () => {
+            return request(app).post('/api/reviews/1000/comments')
+            .expect(404)
+            .send( {username: 'philippaclaire9', body: "Sounds great. You've sold it to me!"} )
+            .then(({body}) => {
+                expect(body.message).toBe("That Review ID does not exist.");
+            })
+        })
+
+        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+            return request(app).post('/api/reviews/apple/comments')
+            .expect(400)
+            .send( {username: 'philippaclaire9', body: "Sounds great. You've sold it to me!"} )
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid Review ID or input object.");
+            })
+        })
+
+        test("Responds to empty input object with 400 status and 'Invalid input object' message.", () => {
+            return request(app).post('/api/reviews/10/comments')
+            .expect(400)
+            .send({})
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid input object.");
+            })
+        })
+
+        test("If username isn't already in users table, returns 400 status and 'Username does not exist' message.", () => {
+            return request(app).post('/api/reviews/10/comments')
+            .expect(400)
+            .send({ username: "michaeljames24", body: "Sounds great. You've sold it to me!" })
+            .then(({body}) => {
+                expect(body.message).toBe("Username does not exist.");
+            })
+        })
+
+    })
+
+})

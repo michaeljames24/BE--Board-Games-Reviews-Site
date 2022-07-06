@@ -37,7 +37,7 @@ exports.getReviewComments = (req, res, next) => {
     const { review_id } = req.params;
     fetchReviewComments(review_id)
     .then(comments => {
-        if (comments.length === 0) {next({status: 404, message: "That Review ID doesn't exist."});}
+        if (comments.length === 0) {next({status: 404, message: "That review either has no comments or does not exist."});}
         else {res.status(200).send({comments});}
     })
     .catch(err => {

@@ -259,7 +259,7 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
 
     describe("Functionality tests:", () => {
 
-        test("Returns an object with a key of 'comment' containing the comment object that was created.", () => {
+        test("Returns an object with a key of 'comment' containing the comment object that was created (complete with six standard properties).", () => {
             return request(app).post('/api/reviews/10/comments')
             .expect(201)
             .send( {username: 'philippaclaire9', body: "Sounds great. You've sold it to me!"} )
@@ -301,6 +301,15 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
             .send({})
             .then(({body}) => {
                 expect(body.message).toBe("Invalid input object.");
+            })
+        })
+
+        test("If username isn't already in users table, returns 400 status and 'Username does not exist' message.", () => {
+            return request(app).post('/api/reviews/10/comments')
+            .expect(400)
+            .send({ username: "michaeljames24", body: "Sounds great. You've sold it to me!" })
+            .then(({body}) => {
+                expect(body.message).toBe("Username does not exist.");
             })
         })
 

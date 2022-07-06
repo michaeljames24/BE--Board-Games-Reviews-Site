@@ -39,3 +39,26 @@ exports.fetchReviewByID = (reviewID) => {
         return review.rows[0];
     })
 }
+
+exports.checkReviewExists = (review_id) => {
+    return db.query(`
+    SELECT * FROM reviews
+    WHERE review_id = $1;
+    `, [review_id])
+    .then(review => {
+        return review.rows.length === 0 ? false : true;
+    })
+    .catch(err => {
+        return err;
+    })
+}
+
+exports.fetchReviewComments = (reviewID) => {
+    return db.query(`
+    SELECT * FROM comments
+    WHERE review_id = $1;
+    `, [reviewID])
+    .then(comments => {
+        return comments.rows;
+    })
+}

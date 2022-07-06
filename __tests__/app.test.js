@@ -179,6 +179,67 @@ describe("GET /api/reviews/:review_id endpoint.", () => {
 
 })
 
+describe("GET /api/reviews/:review_id/comments endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Returns an array of comments for the specified review, each containing the correct six properties.", () => {
+            return request(app).get('/api/reviews/2/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments.length).toBe(3);
+                body.comments.forEach(comment => {
+                    expect(comment.comment_id).toEqual(expect.any(Number));
+                    expect(comment.votes).toEqual(expect.any(Number));
+                    expect(comment.created_at).toEqual(expect.any(String));
+                    expect(comment.author).toEqual(expect.any(String));
+                    expect(comment.body).toEqual(expect.any(String));
+                    expect(comment.review_id).toEqual(expect.any(Number));
+                })
+            })
+            
+        })
+
+        test("If review has no comments, returns an empty array.", () => {
+            return request(app).get('/api/reviews/1/comments')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.comments).toEqual([]);
+            })
+        })
+    
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Responds to invalid review comments path with 404 status and 'That page does not exist' message.", () => {
+            return request(app).get('/api/reviews/2/comment')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That page does not exist.");
+            })
+        })
+
+        test("Responds to valid but non-existent Review ID with 404 status and 'That review does not exist' message.", () => {
+            return request(app).get('/api/reviews/1000/comments')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That review does not exist.");
+            })
+        })
+
+        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+            return request(app).get('/api/reviews/apple/comments')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid Review ID or input object.");
+            })
+        })
+
+    })
+
+})
+
 describe("PATCH /api/reviews/:review_id endpoint.", () => {
 
     describe("Functionality tests:", () => {

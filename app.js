@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {getCategories, getReviews, getReviewByID, getUsers} = require('./controllers/get_controllers');
+const {getCategories, getReviews, getReviewByID, getReviewComments, getUsers} = require('./controllers/get_controllers');
 const {patchReview} = require('./controllers/patch_controllers');
 const {handleBadPaths, handlePSQLErrors, handleCustomErrors} = require('./errors/errors');
 
@@ -11,6 +11,7 @@ app.use(express.json());
 app.get('/api/categories', getCategories);
 app.get('/api/reviews', getReviews);
 app.get('/api/reviews/:review_id', getReviewByID);
+app.get('/api/reviews/:review_id/comments', getReviewComments);
 app.get('/api/users', getUsers);
 
 // PATCH REQUESTS:

@@ -1,4 +1,4 @@
-const {fetchCategories, fetchReviews, fetchReviewByID, fetchUsers} = require('../models/get_models');
+const {fetchCategories, fetchReviews, fetchReviewByID, fetchReviewComments, fetchUsers} = require('../models/get_models');
 
 exports.getCategories = (req, res) => {
     fetchCategories()
@@ -27,6 +27,18 @@ exports.getReviewByID = (req, res, next) => {
     .then(review => {
         if (!review) {next({status: 404, message: "That Review ID doesn't exist."});}
         else {res.status(200).send({review});}
+    })
+    .catch(err => {
+        next(err);
+    });
+}
+
+exports.getReviewComments = (req, res, next) => {
+    const { review_id } = req.params;
+    fetchReviewComments(review_id)
+    .then(comments => {
+        if (comments.length === 0) {next({status: 404, message: "That Review ID doesn't exist."});}
+        else {res.status(200).send({comments});}
     })
     .catch(err => {
         next(err);

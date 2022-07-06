@@ -77,6 +77,53 @@ describe("GET /api/users endpoint.", () => {
 
 })
 
+describe.only("GET /api/reviews endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Responds with an array of objects, each of which contains the correct nine properties.", () => {
+            return request(app).get('/api/reviews')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(13);
+                body.forEach(review => {
+                    expect(review.review_id).toEqual(expect.any(Number));
+                    expect(review.title).toEqual(expect.any(String));
+                    expect(review.category).toEqual(expect.any(String));
+                    expect(review.review_img_url).toEqual(expect.any(String));
+                    expect(review.created_at).toEqual(expect.any(String));
+                    expect(review.votes).toEqual(expect.any(Number));
+                    expect(review.review_body).toEqual(expect.any(String));
+                    expect(review.designer).toEqual(expect.any(String));
+                    expect(review.comment_count).toEqual(expect.any(Number));
+                })
+            })
+        })
+
+        test("Responds with an array of objects sorted by creation date in descending order.", () => {
+            return request(app).get('/api/reviews')
+            .expect(200)
+            .then(({body}) => {
+                expect(body).toBeSorted({ descending: true });
+            })
+        })
+
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Responds to invalid reviews path with 404 status and 'That page does not exist' message.", () => {
+            return request(app).get('/api/reveiws')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That page does not exist.");
+            })
+        })
+
+    })
+
+})
+
 describe("GET /api/reviews/:review_id endpoint.", () => {
 
     describe("Functionality tests:", () => {

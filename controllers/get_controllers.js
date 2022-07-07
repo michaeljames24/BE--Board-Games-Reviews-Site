@@ -14,12 +14,17 @@ exports.getUsers = (req, res) => {
     })
 }
 
+
+
 exports.getReviews = (req, res) => {
-    fetchReviews()
+    fetchReviews(req.query)
     .then(reviews => {
         res.status(200).send(reviews);
     })
 }
+
+
+
 
 exports.getReviewByID = (req, res, next) => {
     const { review_id } = req.params;

@@ -5,6 +5,7 @@ const {patchReview} = require('./controllers/patch_controllers');
 const {postComment} = require('./controllers/post_controllers');
 const {deleteComment} = require('./controllers/delete_controllers');
 const {handleBadPaths, handlePSQLErrors, handleCustomErrors} = require('./errors/errors');
+const endpointsJSON = require('./endpoints.json');
 
 app.use(express.json());
 
@@ -27,6 +28,12 @@ app.post('/api/reviews/:review_id/comments', postComment);
 // DELETE REQUESTS:
 
 app.delete('/api/comments/:comment_id', deleteComment);
+
+// GET ENDPOINTS.JSON:
+
+app.get('/api', () => {
+    console.log(endpointsJSON);
+})
 
 // ERROR HANDLING:
 

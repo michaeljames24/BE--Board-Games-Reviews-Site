@@ -15,6 +15,9 @@ exports.handlePSQLErrors = (err, req, res, next) => {
     else if (err.code === "23503" && err.constraint === "comments_author_fkey") {
         res.status(400).send({ message: "Username does not exist." });
     }
+    else if (err.code === "42703") {
+        res.status(404).send({ message: "That column does not exist." });
+    }
     else {next(err);}
 
 }

@@ -46,12 +46,13 @@ describe("GET /api/categories endpoint.", () => {
 
 describe("GET /api/users endpoint.", () => {
 
-    describe("Functionality tests:", () => {
+    describe.only("Functionality tests:", () => {
 
         test("Responds with an array of four objects, each of which contains the correct three properties.", () => {
             return request(app).get('/api/users')
             .expect(200)
             .then(({body}) => {
+                console.log(body);
                 expect(body.length).toBe(4);
                 body.forEach(user => {
                     expect(user.username).toEqual(expect.any(String));

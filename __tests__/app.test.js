@@ -240,8 +240,6 @@ describe("GET /api/reviews/:review_id/comments endpoint.", () => {
 
 })
 
-// TICKET 11:
-
 describe("GET /api/reviews QUERIES endpoint.", () => {
 
     describe("Functionality tests:", () => {
@@ -291,6 +289,14 @@ describe("GET /api/reviews QUERIES endpoint.", () => {
             })
         })
 
+        test("Returns empty array if specified category exists but has no reviews.", () => {
+            return request(app).get("/api/reviews?category=children's_games")
+            .expect(200)
+            .then(({body}) => {
+                expect(body).toEqual([]);
+            })
+        })
+
         test("Sorts, orders and filters if all three queries are provided.", () => {
             return request(app).get('/api/reviews?sort_by=votes&order=asc&category=social_deduction')
             .expect(200)
@@ -326,12 +332,6 @@ describe("GET /api/reviews QUERIES endpoint.", () => {
     })
 
 })
-
-
-
-
-
-// TICKET 11 ^^
 
 describe("PATCH /api/reviews/:review_id endpoint.", () => {
 

@@ -377,3 +377,34 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
     })
 
 })
+
+describe("DELETE /api/reviews/:review_id/comments endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Deletes specified comment and returns 204 status alone.", () => {
+            return request(app).delete('/api/comments/2')
+            .expect(204)
+            .then(() => {
+                return db.query(`
+                SELECT * FROM comments WHERE comment_id = 2`)
+            }).then((results) =>{
+                expect(results.rows).toEqual([]);
+            })
+        })
+
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Returns 404 and 'Comment not found' message if specified comment does not exist.", () => {
+            return request(app).delete('/api/comments/100')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("Comment not found.");
+            })
+        })
+
+    })
+
+})

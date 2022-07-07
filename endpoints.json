@@ -58,11 +58,5 @@
           "votes": 5
         }
     }
-  },
-  "GET /api/reviews/:review_id/comments": {
-
-
-
-  
-
+  }
 }

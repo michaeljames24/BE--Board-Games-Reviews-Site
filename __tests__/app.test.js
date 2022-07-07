@@ -377,3 +377,31 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
     })
 
 })
+
+// describe.only("GET /api endpoint.", () => {
+
+//     describe("Functionality tests:", () => {
+
+//         test("Responds with JSON object containing overview of all available endpoints.", () => {
+//             return request(app).get('/api')
+//             .expect(200)
+//             .then((endpoints) =>{
+//                 console.log(endpoints);
+//             })
+//         })
+
+//     })
+
+    // describe("Error handling tests:", () => {
+
+    //     test("Returns 404 and 'Comment not found' message if specified comment does not exist.", () => {
+    //         return request(app).delete('/api/comments/100')
+    //         .expect(404)
+    //         .then(({body}) => {
+    //             expect(body.message).toBe("Comment not found.");
+    //         })
+    //     })
+
+    // })
+
+})

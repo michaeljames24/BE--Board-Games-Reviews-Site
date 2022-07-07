@@ -183,10 +183,11 @@ describe("GET /api/reviews/:review_id/comments endpoint.", () => {
 
     describe("Functionality tests:", () => {
 
-        test("Returns an array of comments for the specified review, each containing the correct six properties.", () => {
+        test.only("Returns an array of comments for the specified review, each containing the correct six properties.", () => {
             return request(app).get('/api/reviews/2/comments')
             .expect(200)
             .then(({body}) => {
+                console.log(body);
                 expect(body.comments.length).toBe(3);
                 body.comments.forEach(comment => {
                     expect(comment.comment_id).toEqual(expect.any(Number));
@@ -402,6 +403,6 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
     //         })
     //     })
 
-    // })
+//     // })
 
-})
+// })

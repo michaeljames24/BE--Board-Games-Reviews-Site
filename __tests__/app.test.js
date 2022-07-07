@@ -292,20 +292,41 @@ describe("GET /api/reviews QUERIES endpoint.", () => {
         })
 
         test("Sorts, orders and filters if all three queries are provided.", () => {
-
+            return request(app).get('/api/reviews?sort_by=votes&order=asc&category=social_deduction')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(11);
+                expect(body).toBeSortedBy('votes', { descending: false });
+                body.forEach(review => {
+                    expect(review.category).toBe("social deduction");
+                })
+            })
         })
     
     })
 
     describe("Error handling tests:", () => {
 
-        test("", () => {
+        test("Sends 404 and 'That column does not exist' message if specified sort_by column doesn't exist.", () => {
+            return request(app).get('/api/reviews?sort_by=non_existent_column')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That column does not exist.");
+            })
+        })
 
+        test("Sends 404 and 'That category does not exist' message if specified category doesn't exist.", () => {
+            return request(app).get('/api/reviews?category=non_existent_category')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That category does not exist.");
+            })
         })
 
     })
 
 })
+
 
 
 

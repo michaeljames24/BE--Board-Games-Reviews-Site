@@ -1,4 +1,4 @@
-const {fetchCategories, fetchReviews, fetchReviewByID, checkReviewExists, fetchReviewComments, fetchUsers} = require('../models/get_models');
+const {fetchCategories, checkCategoryExists, fetchReviews, fetchReviewByID, checkReviewExists, fetchReviewComments, fetchUsers} = require('../models/get_models');
 
 exports.getCategories = (req, res) => {
     fetchCategories()
@@ -14,17 +14,18 @@ exports.getUsers = (req, res) => {
     })
 }
 
-
-
-exports.getReviews = (req, res) => {
-    fetchReviews(req.query)
-    .then(reviews => {
-        res.status(200).send(reviews);
-    })
+exports.getReviews = async (req, res, next) => {
+    const { sort_by, order, category } = req.query;
+    if (!category || await checkCategoryExists(category)) {
+        fetchReviews(sort_by, order, category)
+        .then(reviews => {
+            res.status(200).send(reviews);
+        })
+        .catch(err => {
+            next(err);
+        })
+    } else { next({status: 404, message: "That category does not exist."}); }
 }
-
-
-
 
 exports.getReviewByID = (req, res, next) => {
     const { review_id } = req.params;

@@ -1,3 +1,4 @@
+const { parse } = require('dotenv');
 const { user } = require('pg/lib/defaults');
 const db = require('../db/connection');
 
@@ -15,81 +16,25 @@ exports.fetchUsers = () => {
     });
 }
 
-exports.fetchReviews = (userQueries) => {
-    const { sort_by, order, category } = userQueries;
-    const psqlQuery = constructPSQLQuery( sort_by, order, category);
-    return db.query(`${psqlQuery};`)
+exports.fetchReviews = (sort_by, order, category) => {
+    const { psqlQuery, psqlArray } = constructPSQLQuery( sort_by, order, category);
+    return db.query(psqlQuery, psqlArray)
     .then(reviews => {
         return reviews.rows;
     })
 }
 
-function constructPSQLQuery(sort_by, order, category) {
-
-    let psqlQuery = `
-    SELECT reviews.*, CAST(COUNT(comments.review_id) AS INTEGER) AS comment_count
-    FROM reviews
-    LEFT JOIN comments ON reviews.review_id = comments.review_id
-    `;
-
-    switch (category) {
-        case 'euro_game':
-            psqlQuery += `WHERE category = 'euro game' `;
-            break;
-        case 'social_deduction':
-            psqlQuery += `WHERE category = 'social_deduction' `;
-            break;
-        case 'dexderity':
-            psqlQuery += `WHERE category = 'dexderity' `;
-            break;
-        case `children's_games`:
-            psqlQuery += `WHERE category = 'children''s games' `;
-            break;
-        default:
-            break;
-    }
-
-    psqlQuery += `GROUP BY reviews.review_id `;
-
-    switch (sort_by) {
-        case 'title':
-            psqlQuery += `ORDER BY title`;
-            break;
-        case 'designer':
-            psqlQuery += `ORDER BY designer`;
-            break;
-        case 'owner':
-            psqlQuery += `ORDER BY owner`;
-            break;
-        case 'review_img_url':
-            psqlQuery += `ORDER BY review_img_url`;
-            break;
-        case 'review_body':
-            psqlQuery += `ORDER BY review_body`;
-            break;
-        case 'category':
-            psqlQuery += `ORDER BY category`;
-            break;
-        case 'created_at':
-            psqlQuery += `ORDER BY created_at`;
-            break;
-        case 'votes':
-            psqlQuery += `ORDER BY votes`;
-            break;
-        default:
-            psqlQuery += `ORDER BY created_at`;
-    }
-
-    if (order) {order = order.toUpperCase();}
-    psqlQuery += order === "ASC" ? ` ASC` : ` DESC`;
-
-    return psqlQuery;
+exports.checkCategoryExists = (category) => {
+    category = category.toLowerCase();
+    const parsedCategory = category.replace(/_/g, " ");
+    return db.query(`
+    SELECT * FROM categories
+    WHERE slug = $1;
+    `, [ parsedCategory ])
+    .then(category => {
+        return category.rows.length === 0 ? false : true;
+    })
 }
-
-
-
-
-
 
 exports.fetchReviewByID = (reviewID) => {
     return db.query(`
@@ -125,4 +70,61 @@ exports.fetchReviewComments = (reviewID) => {
     .then(comments => {
         return comments.rows;
     })
+}
+
+// SUPPLEMENTARY FUNCTIONS:
+
+function constructPSQLQuery(sort_by, order, category) {
+    let psqlArray = [];
+    let psqlQuery = `
+    SELECT reviews.*, CAST(COUNT(comments.review_id) AS INTEGER) AS comment_count
+    FROM reviews
+    LEFT JOIN comments ON reviews.review_id = comments.review_id
+    `;
+
+    if (category) {
+        category = category.toLowerCase();
+        const parsedCategory = category.replace("_", " ");
+        psqlQuery += `WHERE category = $1`;
+        psqlArray.push(parsedCategory);
+    }
+
+    psqlQuery += `GROUP BY reviews.review_id `;
+
+    switch (sort_by) {
+        case 'title':
+            psqlQuery += `ORDER BY title`;
+            break;
+        case 'designer':
+            psqlQuery += `ORDER BY designer`;
+            break;
+        case 'owner':
+            psqlQuery += `ORDER BY owner`;
+            break;
+        case 'review_img_url':
+            psqlQuery += `ORDER BY review_img_url`;
+            break;
+        case 'review_body':
+            psqlQuery += `ORDER BY review_body`;
+            break;
+        case 'category':
+            psqlQuery += `ORDER BY category`;
+            break;
+        case 'created_at':
+            psqlQuery += `ORDER BY created_at`;
+            break;
+        case 'votes':
+            psqlQuery += `ORDER BY votes`;
+            break;
+        case undefined:
+            psqlQuery += `ORDER BY created_at`;
+            break;
+        default:
+            psqlQuery += `ORDER BY invalid_input`;
+    }
+
+    if (order) {order = order.toUpperCase();}
+    psqlQuery += order === "ASC" ? ` ASC` : ` DESC`;
+
+    return { psqlQuery, psqlArray };
 }

@@ -241,6 +241,99 @@ describe("GET /api/reviews/:review_id/comments endpoint.", () => {
 
 })
 
+describe("GET /api/reviews QUERIES endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Sorts reviews by date in descending order if no sort_by or order queries are provided.", () => {
+            return request(app).get('/api/reviews')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(13);
+                expect(body).toBeSortedBy('created_at', { descending: true });
+            })
+        })
+
+        test("Sorts reviews by sort_by query if provided, in descending order by default.", () => {
+            return request(app).get('/api/reviews?sort_by=votes')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(13);
+                expect(body).toBeSortedBy('votes', { descending: true });
+            })
+        })
+
+        test("Orders results in ascending order if order query specifies this (sorting by created_at by default).", () => {
+            return request(app).get('/api/reviews?order=asc')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(13);
+                expect(body).toBeSortedBy('created_at');
+            })
+        })
+
+        test("Sorts reviews AND orders in ascending order if both sort_by and order queries provided.", () => {
+            return request(app).get('/api/reviews?sort_by=votes&order=asc')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(13);
+                expect(body).toBeSortedBy('votes');
+            })
+        })
+
+        test("Filters results by category if category query is present.", () => {
+            return request(app).get('/api/reviews?category=euro_game')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(1);
+                expect(body[0].title).toBe("Agricola");
+            })
+        })
+
+        test("Returns empty array if specified category exists but has no reviews.", () => {
+            return request(app).get("/api/reviews?category=children's_games")
+            .expect(200)
+            .then(({body}) => {
+                expect(body).toEqual([]);
+            })
+        })
+
+        test("Sorts, orders and filters if all three queries are provided.", () => {
+            return request(app).get('/api/reviews?sort_by=votes&order=asc&category=social_deduction')
+            .expect(200)
+            .then(({body}) => {
+                expect(body.length).toBe(11);
+                expect(body).toBeSortedBy('votes', { descending: false });
+                body.forEach(review => {
+                    expect(review.category).toBe("social deduction");
+                })
+            })
+        })
+    
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Sends 404 and 'That column does not exist' message if specified sort_by column doesn't exist.", () => {
+            return request(app).get('/api/reviews?sort_by=non_existent_column')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That column does not exist.");
+            })
+        })
+
+        test("Sends 404 and 'That category does not exist' message if specified category doesn't exist.", () => {
+            return request(app).get('/api/reviews?category=non_existent_category')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("That category does not exist.");
+            })
+        })
+
+    })
+
+})
+
 describe("PATCH /api/reviews/:review_id endpoint.", () => {
 
     describe("Functionality tests:", () => {

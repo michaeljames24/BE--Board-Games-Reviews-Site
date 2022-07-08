@@ -172,7 +172,7 @@ describe("GET /api/reviews/:review_id endpoint.", () => {
             return request(app).get('/api/reviews/apple')
             .expect(400)
             .then(({body}) => {
-                expect(body.message).toBe("Invalid Review ID or input object.");
+                expect(body.message).toBe("Invalid ID or input object.");
             })
         })
 
@@ -229,11 +229,11 @@ describe("GET /api/reviews/:review_id/comments endpoint.", () => {
             })
         })
 
-        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+        test("Responds to invalid Review ID with 400 status and 'Invalid ID or input object' message.", () => {
             return request(app).get('/api/reviews/apple/comments')
             .expect(400)
             .then(({body}) => {
-                expect(body.message).toBe("Invalid Review ID or input object.");
+                expect(body.message).toBe("Invalid ID or input object.");
             })
         })
 
@@ -379,21 +379,21 @@ describe("PATCH /api/reviews/:review_id endpoint.", () => {
             })
         })
 
-        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+        test("Responds to invalid Review ID with 400 status and 'Invalid ID or input object' message.", () => {
             return request(app).patch('/api/reviews/ABC')
             .expect(400)
             .send({ inc_votes: 5 })
             .then(({body}) => {
-                expect(body.message).toBe("Invalid Review ID or input object.");
+                expect(body.message).toBe("Invalid ID or input object.");
             })
         })
 
-        test("Responds to invalid inc_votes value on input object with 400 status and 'Invalid Review ID or input object' message.", () => {
+        test("Responds to invalid inc_votes value on input object with 400 status and 'Invalid ID or input object' message.", () => {
             return request(app).patch('/api/reviews/2')
             .expect(400)
             .send({ inc_votes: 'A' })
             .then(({body}) => {
-                expect(body.message).toBe("Invalid Review ID or input object.");
+                expect(body.message).toBe("Invalid ID or input object.");
             })
         })
 
@@ -441,12 +441,12 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
             })
         })
 
-        test("Responds to invalid Review ID with 400 status and 'Invalid Review ID or input object' message.", () => {
+        test("Responds to invalid Review ID with 400 status and 'Invalid ID or input object' message.", () => {
             return request(app).post('/api/reviews/apple/comments')
             .expect(400)
             .send( {username: 'philippaclaire9', body: "Sounds great. You've sold it to me!"} )
             .then(({body}) => {
-                expect(body.message).toBe("Invalid Review ID or input object.");
+                expect(body.message).toBe("Invalid ID or input object.");
             })
         })
 
@@ -472,6 +472,45 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
 
 })
 
+describe("DELETE /api/reviews/:review_id/comments endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Deletes specified comment and returns 204 status alone.", () => {
+            return request(app).delete('/api/comments/2')
+            .expect(204)
+            .then(() => {
+                return db.query(`
+                SELECT * FROM comments WHERE comment_id = 2`)
+            }).then((results) =>{
+                expect(results.rows).toEqual([]);
+            })
+        })
+
+    })
+
+    describe("Error handling tests:", () => {
+
+        test("Returns 404 and 'Comment not found' message if specified comment does not exist.", () => {
+            return request(app).delete('/api/comments/100')
+            .expect(404)
+            .then(({body}) => {
+                expect(body.message).toBe("Comment not found.");
+            })
+        })
+
+        test("Returns 400 and 'Invalid ID or input object' message if specified comment_id is invalid.", () => {
+            return request(app).delete('/api/comments/apple')
+            .expect(400)
+            .then(({body}) => {
+                expect(body.message).toBe("Invalid ID or input object.");
+            })
+        })
+
+    })
+
+})
+
 describe("GET /api endpoint.", () => {
 
     describe("Functionality tests:", () => {
@@ -482,8 +521,6 @@ describe("GET /api endpoint.", () => {
             .then(({body}) =>{
                 expect(body.endpoints).toEqual(testEndpoints);
             })
-        });
-
+        })
     })
-
-})
+});

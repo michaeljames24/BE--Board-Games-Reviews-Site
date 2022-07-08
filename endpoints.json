@@ -1,6 +1,6 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints on the api"
+    "description": "serves a json representation of all available endpoints on the api"
   },
   "GET /api/categories": {
     "description": "serves an array of all categories",
@@ -10,6 +10,19 @@
         {
           "description": "Players attempt to uncover each others' hidden roles",
           "slug": "Social deduction"
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "mallionaire",
+          "name": "haz",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
         }
       ]
     }
@@ -41,14 +54,15 @@
           "designer": "Akihisa Okui",
           "owner": "happyamy2016",
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "review_body": "We couldn't find the werewolf!",
           "category": "hidden-roles",
           "created_at": 1610964101251,
           "votes": 5
         }
     }
   },
-  "GET /api/reviews/:review_id": {
-    "description": "serves an array of comments for a specific review",
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves an array of all comments associated to a review",
     "queries": [],
     "exampleResponse": {
       "comments": [
@@ -62,10 +76,48 @@
         }
       ]
     }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "serves an object with a key of 'review' containing the patched review",
+    "patchableProperties": ["votes"],
+    "exampleInput": {
+      "inc_votes": 5
+    },
+    "exampleResponse": {
+      "review":
+        {
+          "title": "Jenga",
+          "designer": "Leslie Scott",
+          "owner": "philippaclaire9",
+          "review_img_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          "review_body": "Fiddly fun for all the family",
+          "category": "dexterity",
+          "created_at": "2021-01-18T10:01:41.251Z",
+          "votes": 10
+        }
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "serves an object with a key of 'comment' containing the newly created comment",
+    "exampleInput": {
+      "username": "philippaclaire9", 
+      "body": "Sounds great. You've sold it to me!"
+    },
+    "exampleResponse": {
+      "comment":
+      {
+        "body": "Sounds great. You've sold it to me!",
+        "votes": 0,
+        "author": "philippaclaire9",
+        "review_id": 7,
+        "created_at": "date_stamp"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes comment and returns 204 status",
+    "exampleResponse": {
+      "status": 204
+    }
   }
-
-
-
-  
-
 }

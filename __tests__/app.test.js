@@ -4,6 +4,7 @@ const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data/index');
 require('jest-sorted');
+const testEndpoints = require('../endpoints.json');
 
 beforeEach(() => {
     return seed(testData);
@@ -509,3 +510,17 @@ describe("DELETE /api/reviews/:review_id/comments endpoint.", () => {
     })
 
 })
+
+describe("GET /api endpoint.", () => {
+
+    describe("Functionality tests:", () => {
+
+        test("Responds with JSON object containing overview of all available endpoints.", () => {
+            return request(app).get('/api')
+            .expect(200)
+            .then(({body}) =>{
+                expect(body.endpoints).toEqual(testEndpoints);
+            })
+        })
+    })
+});

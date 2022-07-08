@@ -1,3 +1,4 @@
+const db = require('../db/connection');
 const {fetchCategories, checkCategoryExists, fetchReviews, fetchReviewByID, checkReviewExists, fetchReviewComments, fetchUsers} = require('../models/get_models');
 
 exports.getCategories = (req, res) => {

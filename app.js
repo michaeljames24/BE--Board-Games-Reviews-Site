@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const db = require('../db/connection');
 const {getCategories, getReviews, getReviewByID, getReviewComments, getUsers} = require('./controllers/get_controllers');
 const {patchReview} = require('./controllers/patch_controllers');
 const {postComment} = require('./controllers/post_controllers');

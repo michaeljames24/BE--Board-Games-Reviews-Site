@@ -4,7 +4,7 @@ const {getCategories, getReviews, getReviewByID, getReviewComments, getUsers} = 
 const {patchReview} = require('./controllers/patch_controllers');
 const {postComment} = require('./controllers/post_controllers');
 const {handleBadPaths, handlePSQLErrors, handleCustomErrors} = require('./errors/errors');
-const endpointsJSON = require('./endpoints.json');
+const endpoints = require('./endpoints.json');
 
 app.use(express.json());
 
@@ -26,9 +26,7 @@ app.post('/api/reviews/:review_id/comments', postComment);
 
 // GET ENDPOINTS.JSON:
 
-app.get('/api', () => {
-    console.log(endpointsJSON);
-})
+app.get('/api', (req,res) => {return res.status(200).send({endpoints})});
 
 // ERROR HANDLING:
 

@@ -4,6 +4,7 @@ const db = require('../db/connection');
 const seed = require('../db/seeds/seed');
 const testData = require('../db/data/test-data/index');
 require('jest-sorted');
+const testEndpoints = require('../endpoints.json');
 
 beforeEach(() => {
     return seed(testData);
@@ -471,30 +472,18 @@ describe("POST /api/reviews/:review_id/comments endpoint.", () => {
 
 })
 
-// describe.only("GET /api endpoint.", () => {
+describe("GET /api endpoint.", () => {
 
-//     describe("Functionality tests:", () => {
+    describe("Functionality tests:", () => {
 
-//         test("Responds with JSON object containing overview of all available endpoints.", () => {
-//             return request(app).get('/api')
-//             .expect(200)
-//             .then((endpoints) =>{
-//                 console.log(endpoints);
-//             })
-//         })
+        test("Responds with JSON object containing overview of all available endpoints.", () => {
+            return request(app).get('/api')
+            .expect(200)
+            .then(({body}) =>{
+                expect(body.endpoints).toEqual(testEndpoints);
+            })
+        });
 
-//     })
+    })
 
-    // describe("Error handling tests:", () => {
-
-    //     test("Returns 404 and 'Comment not found' message if specified comment does not exist.", () => {
-    //         return request(app).delete('/api/comments/100')
-    //         .expect(404)
-    //         .then(({body}) => {
-    //             expect(body.message).toBe("Comment not found.");
-    //         })
-    //     })
-
-//     // })
-
-// })
+})

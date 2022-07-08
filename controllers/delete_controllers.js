@@ -6,5 +6,8 @@ exports.deleteComment = (req, res, next) => {
     .then((deletedComment) => {
         if (deletedComment.rows.length !== 0) {res.status(204).send();}
         next({status: 404, message: "Comment not found."})
-    });
+    })
+    .catch(err => {
+        next(err);
+    })
 }

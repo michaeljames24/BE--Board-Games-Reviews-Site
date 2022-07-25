@@ -6,8 +6,10 @@ const {postComment} = require('./controllers/post_controllers');
 const {deleteComment} = require('./controllers/delete_controllers');
 const {handleBadPaths, handlePSQLErrors, handleCustomErrors} = require('./errors/errors');
 const endpoints = require('./endpoints.json');
+const cors = require('cors');
 
 app.use(express.json());
+app.use(cors());
 
 // GET REQUESTS:
 

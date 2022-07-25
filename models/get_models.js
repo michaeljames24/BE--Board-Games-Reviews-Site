@@ -1,5 +1,3 @@
-const { parse } = require('dotenv');
-const { user } = require('pg/lib/defaults');
 const db = require('../db/connection');
 
 exports.fetchCategories = () => {

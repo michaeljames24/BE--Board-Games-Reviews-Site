@@ -35,4 +35,10 @@ module.exports = [
     avatar_url:
       'https://vignette.wikia.nocookie.net/mrmen/images/4/4f/MR_JELLY_4A.jpg/revision/latest?cb=20180104121141',
   },
+  {
+    username: 'default_user123',
+    name: 'Default User',
+    avatar_url:
+      'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg',
+  }
 ];

@@ -4,7 +4,6 @@ const db = require('../connection.js');
 
 const runSeed = () => {
   return seed(devData).then(() => {
-    console.log("seeded");
     db.end();
   }
   );
